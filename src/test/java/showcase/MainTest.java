@@ -3,6 +3,8 @@ package showcase;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static showcase.PersonValidator.*;
+import static showcase.PersonValidator.ValidationResult.*;
 
 import java.util.List;
 import java.util.Map;
@@ -122,33 +124,43 @@ class MainTest {
                 .stream().collect(Collectors.groupingBy(Person::getMaritalStatus));
 
         System.out.println(grouping);
-        assertTrue(grouping.get(MaritalStatus.MARRIED).size() > 0 );
+        assertTrue(grouping.get(MaritalStatus.MARRIED).size() > 0);
 
     }
 
     @Test
-    void testParallel(){
+    void testParallel() {
         Optional<Long> result = Stream.iterate(1L, i -> i + 1)  // Ejemplo de rangos infinitos
                 .limit(10)
                 .parallel()
-                .reduce((x,y) -> x + y); // Equivalente a Fold
+                .reduce((x, y) -> x + y); // Equivalente a Fold
 
         System.out.println(result.isPresent());
-        assertEquals(55l,  result.isPresent() ? result.get() : result.orElse(0l)); // Equivalente a Optional
+        assertEquals(55l, result.isPresent() ? result.get() : result.orElse(0l)); // Equivalente a Optional
     }
 
 
     @Test
     void testFuture() throws InterruptedException, ExecutionException {
         CompletableFuture<Optional<Person>> randomPersonWithFamily = new CompletableFuture<>();
-        new Thread( () -> {
-                Person p = PersonFactory.buildRandomPerson.get();
-                PersonFactory.buildRandomFamily.accept(p);
-                randomPersonWithFamily.complete(Optional.of(p));
+        new Thread(() -> {
+            Person p = PersonFactory.buildRandomPerson.get();
+            PersonFactory.buildRandomFamily.accept(p);
+            randomPersonWithFamily.complete(Optional.of(p));
         }).start();
-        assertTrue( randomPersonWithFamily.get().isPresent());
+        assertTrue(randomPersonWithFamily.get().isPresent());
     }
 
+    @Test
+    void testValidator() {
+        Person p1 = PersonFactory.buildRandomPerson.get();
+        Person p2 = new Person(10, "Persona", "Prueba", Gender.MALE, MaritalStatus.SINGLE);
+        System.out.println(p1);
+        System.out.println(PersonFactory.validatePerson.apply(p1));
+        assertEquals(AGE_NOT_VALID,
+                PersonFactory.validatePerson.apply(p2)
+        );
+    }
 
 
 }

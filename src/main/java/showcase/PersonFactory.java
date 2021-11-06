@@ -3,10 +3,13 @@ package showcase;
 import java.util.HashSet;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static showcase.PersonValidator.*;
 
 public class PersonFactory {
     /**
@@ -35,5 +38,12 @@ public class PersonFactory {
         a.setRelatives(Stream.concat(a.getRelatives().stream(), b.getRelatives().stream()).collect(Collectors.toCollection(HashSet::new)));
         return a;
     };
+
+    public static Function<Person, ValidationResult> validatePerson =
+            (person ) ->
+             isAgeValid()
+            .and(isRelativesValid())
+            .and(isNameValid())
+            .apply(person);
 
 }
