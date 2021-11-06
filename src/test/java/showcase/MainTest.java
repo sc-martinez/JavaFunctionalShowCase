@@ -36,7 +36,7 @@ class MainTest {
         //Predicate
         Person p1 = new Person(15, "Andres", "Reyes",
                 Gender.MALE, MaritalStatus.SINGLE);
-        Predicate<Person> isSingle = person -> Gender.MALE.equals(person.getGender());
+        Predicate<Person> isSingle = person -> MaritalStatus.SINGLE.equals(person.getGender());
         assertTrue(isSingle.test(p1));
     }
 
@@ -113,7 +113,7 @@ class MainTest {
             List<Person> marriage = List.of(
                     PersonFactory.buildRandomPerson.get(),
                     PersonFactory.buildRandomPerson.get());
-            marriage.forEach(p -> {
+            marriage.stream().forEach(p -> {
                 PersonFactory.buildRandomFamily.andThen(person -> person.setMaritalStatus(MaritalStatus.MARRIED)).accept(p);
             });
             return marriage;

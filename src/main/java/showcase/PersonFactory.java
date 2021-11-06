@@ -35,7 +35,10 @@ public class PersonFactory {
                     );
 
     public static BinaryOperator<Person> addRelatives = (a, b) -> {
-        a.setRelatives(Stream.concat(a.getRelatives().stream(), b.getRelatives().stream()).collect(Collectors.toCollection(HashSet::new)));
+        a.setRelatives(Stream
+                        .concat(a.getRelatives().stream(), b.getRelatives().stream())
+                        .collect(Collectors.toCollection(HashSet::new))
+        );
         return a;
     };
 
